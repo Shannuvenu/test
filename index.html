@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Breadcrumb Fix — Demo Test Page</title>
+<meta name="description" content="Demo page isolating the BreadcrumbList name/item.name fix for the SEO & Structured Data Health Check tool.">
+<link rel="canonical" href="https://example.com/breadcrumb-fix-demo">
+
+<!-- CASE 1: BROKEN — item is a bare URL string, no "name" anywhere.
+     This is the exact bug reported: our tool used to mark this eligible;
+     Google's real Rich Results Test always flagged it. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://example.com/" },
+    { "@type": "ListItem", "position": 2, "item": "https://example.com/broken-breadcrumb-case" }
+  ]
+}
+</script>
+
+<!-- CASE 2: VALID — name given directly on every ListItem. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://example.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Category", "item": "https://example.com/category" },
+    { "@type": "ListItem", "position": 3, "name": "Valid Breadcrumb Case", "item": "https://example.com/category/valid-breadcrumb-case" }
+  ]
+}
+</script>
+
+<!-- CASE 3: VALID (older syntax) — name nested inside the "item" object
+     instead of on the ListItem directly. Also a valid form per Google. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "item": { "@id": "https://example.com/", "name": "Home" } },
+    { "@type": "ListItem", "position": 2, "item": { "@id": "https://example.com/item-name-case", "name": "Item.name Case" } }
+  ]
+}
+</script>
+</head>
+<body>
+  <h1>Breadcrumb Fix — Demo Test Page</h1>
+  <p>
+    This page exists only to demo one specific fix in the SEO &amp; Structured Data
+    Health Check tool: the <code>BreadcrumbList</code> <code>itemListElement</code>
+    name check.
+  </p>
+  <p>It contains three separate <code>BreadcrumbList</code> blocks:</p>
+  <ol>
+    <li><strong>Broken</strong> — one entry has a bare URL <code>item</code> and no <code>name</code> anywhere. This should show <code>GOOGLE INELIGIBLE · Breadcrumb</code> with the error: <em>Either "name" or "item.name" should be specified (in "itemListElement")</em>.</li>
+    <li><strong>Valid (name on ListItem)</strong> — every entry has its own <code>name</code>. Should show <code>GOOGLE ELIGIBLE · Breadcrumb</code> with 0 errors.</li>
+    <li><strong>Valid (item.name)</strong> — the older syntax, name nested inside the <code>item</code> object. Should also show <code>GOOGLE ELIGIBLE · Breadcrumb</code> with 0 errors.</li>
+  </ol>
+  <p>Run this URL through the Structured Data tab to see all three side by side.</p>
+</body>
+</html>
