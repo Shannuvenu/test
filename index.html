@@ -2,25 +2,70 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Breadcrumb Fix — Demo Test Page</title>
-<meta name="description" content="Demo page isolating the BreadcrumbList name/item.name fix for the SEO & Structured Data Health Check tool.">
+<title>Breadcrumb Validation — Full Demo</title>
+<meta name="description" content="Demo page covering every BreadcrumbList check the SEO & Structured Data Health Check tool runs: missing name, missing position, duplicate position, non-sequential position, and two valid forms.">
 <link rel="canonical" href="https://example.com/breadcrumb-fix-demo">
 
-<!-- CASE 1: BROKEN — item is a bare URL string, no "name" anywhere.
-     This is the exact bug reported: our tool used to mark this eligible;
-     Google's real Rich Results Test always flagged it. -->
+<!-- CASE 1: BROKEN -- missing name (no "name", "item" is a bare URL string). -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
     { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://example.com/" },
-    { "@type": "ListItem", "position": 2, "item": "https://example.com/broken-breadcrumb-case" }
+    { "@type": "ListItem", "position": 2, "item": "https://example.com/case-1-missing-name" }
   ]
 }
 </script>
 
-<!-- CASE 2: VALID — name given directly on every ListItem. -->
+<!-- CASE 2: BROKEN -- missing "position" entirely on one entry. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://example.com/" },
+    { "@type": "ListItem", "name": "Case 2: Missing Position", "item": "https://example.com/case-2-missing-position" }
+  ]
+}
+</script>
+
+<!-- CASE 3: BROKEN -- duplicate "position" value (two entries both say 1). -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://example.com/" },
+    { "@type": "ListItem", "position": 1, "name": "Case 3: Duplicate Position", "item": "https://example.com/case-3-duplicate-position" }
+  ]
+}
+</script>
+
+<!-- CASE 4: BROKEN -- invalid "position" value (not a number at all). -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": "first", "name": "Case 4: Invalid Position", "item": "https://example.com/case-4-invalid-position" }
+  ]
+}
+</script>
+
+<!-- CASE 5: WARNING (not a hard error) -- positions skip a number (1, 3). -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://example.com/" },
+    { "@type": "ListItem", "position": 3, "name": "Case 5: Gap In Positions", "item": "https://example.com/case-5-gap-in-positions" }
+  ]
+}
+</script>
+
+<!-- CASE 6: VALID -- name given directly on every ListItem, sequential positions. -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -28,37 +73,39 @@
   "itemListElement": [
     { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://example.com/" },
     { "@type": "ListItem", "position": 2, "name": "Category", "item": "https://example.com/category" },
-    { "@type": "ListItem", "position": 3, "name": "Valid Breadcrumb Case", "item": "https://example.com/category/valid-breadcrumb-case" }
+    { "@type": "ListItem", "position": 3, "name": "Case 6: Fully Valid", "item": "https://example.com/category/case-6-fully-valid" }
   ]
 }
 </script>
 
-<!-- CASE 3: VALID (older syntax) — name nested inside the "item" object
-     instead of on the ListItem directly. Also a valid form per Google. -->
+<!-- CASE 7: VALID (older syntax) -- name nested inside the "item" object. -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
     { "@type": "ListItem", "position": 1, "item": { "@id": "https://example.com/", "name": "Home" } },
-    { "@type": "ListItem", "position": 2, "item": { "@id": "https://example.com/item-name-case", "name": "Item.name Case" } }
+    { "@type": "ListItem", "position": 2, "item": { "@id": "https://example.com/case-7-item-name", "name": "Case 7: item.name Valid" } }
   ]
 }
 </script>
 </head>
 <body>
-  <h1>Breadcrumb Fix — Demo Test Page</h1>
+  <h1>Breadcrumb Validation — Full Demo</h1>
   <p>
-    This page exists only to demo one specific fix in the SEO &amp; Structured Data
-    Health Check tool: the <code>BreadcrumbList</code> <code>itemListElement</code>
-    name check.
+    Covers every <code>BreadcrumbList</code> check the tool runs today, not just one
+    case -- 4 broken cases, 1 warning-only case, and 2 valid forms.
   </p>
-  <p>It contains three separate <code>BreadcrumbList</code> blocks:</p>
-  <ol>
-    <li><strong>Broken</strong> — one entry has a bare URL <code>item</code> and no <code>name</code> anywhere. This should show <code>GOOGLE INELIGIBLE · Breadcrumb</code> with the error: <em>Either "name" or "item.name" should be specified (in "itemListElement")</em>.</li>
-    <li><strong>Valid (name on ListItem)</strong> — every entry has its own <code>name</code>. Should show <code>GOOGLE ELIGIBLE · Breadcrumb</code> with 0 errors.</li>
-    <li><strong>Valid (item.name)</strong> — the older syntax, name nested inside the <code>item</code> object. Should also show <code>GOOGLE ELIGIBLE · Breadcrumb</code> with 0 errors.</li>
-  </ol>
-  <p>Run this URL through the Structured Data tab to see all three side by side.</p>
+  <table border="1" cellpadding="6" style="border-collapse:collapse;">
+    <tr><th>#</th><th>Case</th><th>Expected result</th></tr>
+    <tr><td>1</td><td>Missing name</td><td>INELIGIBLE — "Either name or item.name should be specified"</td></tr>
+    <tr><td>2</td><td>Missing position</td><td>INELIGIBLE — "Missing field position"</td></tr>
+    <tr><td>3</td><td>Duplicate position</td><td>INELIGIBLE — "Duplicate position value"</td></tr>
+    <tr><td>4</td><td>Invalid position (not a number)</td><td>INELIGIBLE — "Invalid position value"</td></tr>
+    <tr><td>5</td><td>Gap in positions (1, 3)</td><td>ELIGIBLE, but with a WARNING about the gap</td></tr>
+    <tr><td>6</td><td>Fully valid (name on ListItem)</td><td>ELIGIBLE, 0 errors, 0 warnings</td></tr>
+    <tr><td>7</td><td>Fully valid (item.name, older syntax)</td><td>ELIGIBLE, 0 errors, 0 warnings</td></tr>
+  </table>
+  <p>Run this URL through the Structured Data tab to see all 7 side by side.</p>
 </body>
 </html>
