@@ -1,501 +1,149 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-    <meta charset="utf-8">
-    <title>Breadcrumb Validation — Full Demo</title>
-
-```
-<meta name="description"
-    content="Demo page covering BreadcrumbList validation errors including missing name, missing position, duplicate position, invalid position, position gaps, and valid forms.">
-
+<meta charset="utf-8">
+<title>Breadcrumb Validation — Full Demo v3</title>
+<meta name="description" content="Demo page covering every BreadcrumbList check the SEO & Structured Data Health Check tool runs.">
 <link rel="canonical" href="https://example.com/breadcrumb-fix-demo">
 
-<!-- ========================================================= -->
-<!-- CASE 1: BROKEN — Missing name                              -->
-<!-- ========================================================= -->
+<!-- CASE 1: BROKEN -- missing name (no "name", "item" is a bare URL string). -->
 <script type="application/ld+json">
 {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-        {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://example.com/"
-        },
-        {
-            "@type": "ListItem",
-            "position": 2,
-            "item": "https://example.com/case-1-missing-name"
-        }
-    ]
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://example.com/" },
+    { "@type": "ListItem", "position": 2, "item": "https://example.com/case-1-missing-name" }
+  ]
 }
 </script>
 
-
-<!-- ========================================================= -->
-<!-- CASE 2: BROKEN — Missing position                         -->
-<!-- ========================================================= -->
+<!-- CASE 2: BROKEN -- missing "position" entirely on one entry. -->
 <script type="application/ld+json">
 {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-        {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://example.com/"
-        },
-        {
-            "@type": "ListItem",
-            "name": "Case 2: Missing Position",
-            "item": "https://example.com/case-2-missing-position"
-        }
-    ]
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://example.com/" },
+    { "@type": "ListItem", "name": "Case 2: Missing Position", "item": "https://example.com/case-2-missing-position" }
+  ]
 }
 </script>
 
-
-<!-- ========================================================= -->
-<!-- CASE 3: BROKEN — Duplicate position                       -->
-<!-- ========================================================= -->
+<!-- CASE 3: BROKEN -- duplicate "position" value (two entries both say 1). -->
 <script type="application/ld+json">
 {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-        {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://example.com/"
-        },
-        {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Case 3: Duplicate Position",
-            "item": "https://example.com/case-3-duplicate-position"
-        }
-    ]
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://example.com/" },
+    { "@type": "ListItem", "position": 1, "name": "Case 3: Duplicate Position", "item": "https://example.com/case-3-duplicate-position" }
+  ]
 }
 </script>
 
-
-<!-- ========================================================= -->
-<!-- CASE 4: BROKEN — Invalid position                         -->
-<!-- ========================================================= -->
+<!-- CASE 4: BROKEN -- invalid "position" value (not a number at all). -->
 <script type="application/ld+json">
 {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-        {
-            "@type": "ListItem",
-            "position": "first",
-            "name": "Case 4: Invalid Position",
-            "item": "https://example.com/case-4-invalid-position"
-        }
-    ]
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": "first", "name": "Home", "item": "https://example.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Case 4: Invalid Position", "item": "https://example.com/case-4-invalid-position" }
+  ]
 }
 </script>
 
-
-<!-- ========================================================= -->
-<!-- CASE 5: WARNING — Gap in positions                        -->
-<!-- ========================================================= -->
+<!-- CASE 5: WARNING (not a hard error) -- positions skip a number (1, 3). -->
 <script type="application/ld+json">
 {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-        {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://example.com/"
-        },
-        {
-            "@type": "ListItem",
-            "position": 3,
-            "name": "Case 5: Gap In Positions",
-            "item": "https://example.com/case-5-gap-in-positions"
-        }
-    ]
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://example.com/" },
+    { "@type": "ListItem", "position": 3, "name": "Case 5: Gap In Positions", "item": "https://example.com/case-5-gap-in-positions" }
+  ]
 }
 </script>
 
-
-<!-- ========================================================= -->
-<!-- CASE 6: VALID                                               -->
-<!-- ========================================================= -->
+<!-- CASE 6: BROKEN -- only one ListItem (Google requires at least two). -->
 <script type="application/ld+json">
 {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-        {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://example.com/"
-        },
-        {
-            "@type": "ListItem",
-            "position": 2,
-            "name": "Category",
-            "item": "https://example.com/category"
-        },
-        {
-            "@type": "ListItem",
-            "position": 3,
-            "name": "Case 6: Fully Valid",
-            "item": "https://example.com/category/case-6-fully-valid"
-        }
-    ]
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Case 6: Only One Item", "item": "https://example.com/case-6-only-one-item" }
+  ]
 }
 </script>
 
-
-<!-- ========================================================= -->
-<!-- CASE 7: VALID — item.name syntax                           -->
-<!-- ========================================================= -->
+<!-- CASE 7: BROKEN -- missing "item" (URL) on a NON-last entry. -->
 <script type="application/ld+json">
 {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-        {
-            "@type": "ListItem",
-            "position": 1,
-            "item": {
-                "@id": "https://example.com/",
-                "name": "Home"
-            }
-        },
-        {
-            "@type": "ListItem",
-            "position": 2,
-            "item": {
-                "@id": "https://example.com/case-7-item-name",
-                "name": "Case 7: item.name Valid"
-            }
-        }
-    ]
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home" },
+    { "@type": "ListItem", "position": 2, "name": "Case 7: Missing Item URL", "item": "https://example.com/case-7-missing-item-url" }
+  ]
 }
 </script>
 
+<!-- CASE 8: VALID -- name on every ListItem, sequential positions, item on every entry. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://example.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Category", "item": "https://example.com/category" },
+    { "@type": "ListItem", "position": 3, "name": "Case 8: Fully Valid", "item": "https://example.com/category/case-8-fully-valid" }
+  ]
+}
+</script>
 
-<!-- ========================================================= -->
-<!-- STYLING                                                     -->
-<!-- ========================================================= -->
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 40px;
-        background: #f7f8fa;
-        color: #222;
-    }
+<!-- CASE 9: VALID (older syntax) -- name nested inside the "item" object. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "item": { "@id": "https://example.com/", "name": "Home" } },
+    { "@type": "ListItem", "position": 2, "item": { "@id": "https://example.com/case-9-item-name", "name": "Case 9: item.name Valid" } }
+  ]
+}
+</script>
 
-    h1 {
-        margin-bottom: 10px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        background: white;
-        margin-top: 20px;
-    }
-
-    th,
-    td {
-        border: 1px solid #ccc;
-        padding: 12px;
-        text-align: left;
-    }
-
-    th {
-        background: #eee;
-    }
-
-    .error {
-        background: #fff0f0;
-        border-left: 5px solid #d93025;
-        padding: 15px;
-        margin: 15px 0;
-    }
-
-    .warning {
-        background: #fff8e1;
-        border-left: 5px solid #f9ab00;
-        padding: 15px;
-        margin: 15px 0;
-    }
-
-    .success {
-        background: #edf7ed;
-        border-left: 5px solid #188038;
-        padding: 15px;
-        margin: 15px 0;
-    }
-
-    .status {
-        font-weight: bold;
-    }
-
-    code {
-        background: #eee;
-        padding: 2px 5px;
-        border-radius: 3px;
-    }
-</style>
-```
-
+<!-- CASE 10: VALID -- last item omits "item" (URL), since it represents the
+     current page. This is Google's own documented, official pattern (their
+     example page does exactly this) -- must NOT be flagged as an error. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://example.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Case 10: Last Item Omits URL (Valid)" }
+  ]
+}
+</script>
 </head>
-
 <body>
-
-```
-<h1>Breadcrumb Validation — Full Demo</h1>
-
-<p>
-    This demo contains broken, warning, and valid
-    <code>BreadcrumbList</code> structured-data examples.
-</p>
-
-
-<!-- ========================================================= -->
-<!-- VALIDATION RESULTS                                         -->
-<!-- ========================================================= -->
-
-<h2>Breadcrumb Validation Results</h2>
-
-
-<!-- CASE 1 ERROR -->
-<div class="error">
-    <div class="status">❌ CASE 1 — INELIGIBLE</div>
-
-    <p>
-        <strong>Error:</strong>
-        Either <code>name</code> or <code>item.name</code> should be specified.
-    </p>
-
-    <p>
-        <strong>Problem:</strong>
-        ListItem at position 2 does not contain a breadcrumb name.
-    </p>
-
-    <p>
-        <strong>Fix:</strong>
-        Add a <code>name</code> property to the ListItem.
-    </p>
-</div>
-
-
-<!-- CASE 2 ERROR -->
-<div class="error">
-    <div class="status">❌ CASE 2 — INELIGIBLE</div>
-
-    <p>
-        <strong>Error:</strong>
-        Missing field <code>position</code>.
-    </p>
-
-    <p>
-        <strong>Problem:</strong>
-        The second breadcrumb item does not have a position.
-    </p>
-
-    <p>
-        <strong>Fix:</strong>
-        Add a numeric <code>position</code> value.
-    </p>
-</div>
-
-
-<!-- CASE 3 ERROR -->
-<div class="error">
-    <div class="status">❌ CASE 3 — INELIGIBLE</div>
-
-    <p>
-        <strong>Error:</strong>
-        Duplicate position value.
-    </p>
-
-    <p>
-        <strong>Problem:</strong>
-        Two breadcrumb items use <code>position: 1</code>.
-    </p>
-
-    <p>
-        <strong>Fix:</strong>
-        Give every breadcrumb item a unique position.
-    </p>
-</div>
-
-
-<!-- CASE 4 ERROR -->
-<div class="error">
-    <div class="status">❌ CASE 4 — INELIGIBLE</div>
-
-    <p>
-        <strong>Error:</strong>
-        Invalid position value.
-    </p>
-
-    <p>
-        <strong>Problem:</strong>
-        <code>position</code> is set to
-        <code>"first"</code> instead of a number.
-    </p>
-
-    <p>
-        <strong>Fix:</strong>
-        Use a numeric value such as <code>1</code>.
-    </p>
-</div>
-
-
-<!-- CASE 5 WARNING -->
-<div class="warning">
-    <div class="status">⚠️ CASE 5 — ELIGIBLE WITH WARNING</div>
-
-    <p>
-        <strong>Warning:</strong>
-        Breadcrumb positions are not sequential.
-    </p>
-
-    <p>
-        <strong>Detected positions:</strong>
-        <code>1, 3</code>
-    </p>
-
-    <p>
-        <strong>Expected:</strong>
-        <code>1, 2</code>
-    </p>
-
-    <p>
-        This is treated as a warning rather than a hard error.
-    </p>
-</div>
-
-
-<!-- CASE 6 SUCCESS -->
-<div class="success">
-    <div class="status">✅ CASE 6 — ELIGIBLE</div>
-
-    <p>
-        <strong>Status:</strong>
-        Fully valid BreadcrumbList.
-    </p>
-
-    <p>
-        All ListItems contain names and valid sequential positions.
-    </p>
-
-    <p>
-        <strong>Errors:</strong> 0
-        <br>
-        <strong>Warnings:</strong> 0
-    </p>
-</div>
-
-
-<!-- CASE 7 SUCCESS -->
-<div class="success">
-    <div class="status">✅ CASE 7 — ELIGIBLE</div>
-
-    <p>
-        <strong>Status:</strong>
-        Valid BreadcrumbList using the
-        <code>item.name</code> syntax.
-    </p>
-
-    <p>
-        <strong>Errors:</strong> 0
-        <br>
-        <strong>Warnings:</strong> 0
-    </p>
-</div>
-
-
-<!-- ========================================================= -->
-<!-- SUMMARY TABLE                                              -->
-<!-- ========================================================= -->
-
-<h2>Validation Summary</h2>
-
-<table>
-    <tr>
-        <th>#</th>
-        <th>Case</th>
-        <th>Expected Result</th>
-        <th>Error / Warning</th>
-    </tr>
-
-    <tr>
-        <td>1</td>
-        <td>Missing name</td>
-        <td>❌ INELIGIBLE</td>
-        <td>Either name or item.name should be specified</td>
-    </tr>
-
-    <tr>
-        <td>2</td>
-        <td>Missing position</td>
-        <td>❌ INELIGIBLE</td>
-        <td>Missing field position</td>
-    </tr>
-
-    <tr>
-        <td>3</td>
-        <td>Duplicate position</td>
-        <td>❌ INELIGIBLE</td>
-        <td>Duplicate position value</td>
-    </tr>
-
-    <tr>
-        <td>4</td>
-        <td>Invalid position</td>
-        <td>❌ INELIGIBLE</td>
-        <td>Invalid position value</td>
-    </tr>
-
-    <tr>
-        <td>5</td>
-        <td>Gap in positions</td>
-        <td>⚠️ ELIGIBLE</td>
-        <td>Warning about non-sequential positions</td>
-    </tr>
-
-    <tr>
-        <td>6</td>
-        <td>Fully valid</td>
-        <td>✅ ELIGIBLE</td>
-        <td>0 errors, 0 warnings</td>
-    </tr>
-
-    <tr>
-        <td>7</td>
-        <td>item.name valid syntax</td>
-        <td>✅ ELIGIBLE</td>
-        <td>0 errors, 0 warnings</td>
-    </tr>
-
-</table>
-
-
-<p>
-    Run this URL through the Structured Data tab to see all
-    seven BreadcrumbList cases side by side.
-</p>
-```
-
+  <h1>Breadcrumb Validation — Full Demo v3</h1>
+  <p>Covers every <code>BreadcrumbList</code> check the tool runs today: 6 broken cases, 1 warning-only case, and 3 valid forms.</p>
+  <table border="1" cellpadding="6" style="border-collapse:collapse;">
+    <tr><th>#</th><th>Case</th><th>Expected result</th></tr>
+    <tr><td>1</td><td>Missing name</td><td>INELIGIBLE — "Either name or item.name should be specified"</td></tr>
+    <tr><td>2</td><td>Missing position</td><td>INELIGIBLE — "Missing field position"</td></tr>
+    <tr><td>3</td><td>Duplicate position</td><td>INELIGIBLE — "Duplicate position value"</td></tr>
+    <tr><td>4</td><td>Invalid position (not a number)</td><td>INELIGIBLE — "Invalid position value"</td></tr>
+    <tr><td>5</td><td>Gap in positions (1, 3)</td><td>ELIGIBLE, but with a WARNING about the gap</td></tr>
+    <tr><td>6</td><td>Only one ListItem</td><td>INELIGIBLE — "must contain at least two itemListElement entries"</td></tr>
+    <tr><td>7</td><td>Missing item URL (non-last entry)</td><td>INELIGIBLE — "Missing field item"</td></tr>
+    <tr><td>8</td><td>Fully valid (name on ListItem)</td><td>ELIGIBLE, 0 errors, 0 warnings</td></tr>
+    <tr><td>9</td><td>Fully valid (item.name, older syntax)</td><td>ELIGIBLE, 0 errors, 0 warnings</td></tr>
+    <tr><td>10</td><td>Last item omits URL (Google's own documented pattern)</td><td>ELIGIBLE, 0 errors, 0 warnings</td></tr>
+  </table>
+  <p>Run this URL through the Structured Data tab to see all 10 side by side.</p>
 </body>
-
 </html>
